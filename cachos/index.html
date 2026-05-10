@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Un Cacho</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  /styles.css">
 </head>
 <body>
 
-  <!-- ===== PANTALLA: INICIO ===== -->
+  <!-- PANTALLA INICIO -->
   <div id="screen-inicio" class="screen active">
     <div class="inicio-content">
       <h1 class="app-title">Un Cacho</h1>
-      <div class="dado-decorativo">⚄</div>
+      <div class="dado-decorativo">&#9999;</div>
       <p class="label-dados">¿Cuántos dados?</p>
       <div class="selector-dados">
         <button class="btn-selector" id="btn-menos-inicio">−</button>
@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <!-- ===== PANTALLA: JUEGO (todos los estados del cacho) ===== -->
+  <!-- PANTALLA JUEGO — todos los estados del cacho -->
   <div id="screen-juego" class="screen">
 
     <!-- Header -->
@@ -34,43 +34,15 @@
         <span id="dados-iconos"></span>
         <span id="dados-count"></span>
       </div>
-      <button class="btn-secondary btn-small" id="btn-volver-tirar" style="display:none;">Volver a tirar</button>
+      <button class="btn-secondary btn-small" id="btn-volver-tirar" style="display:none">Volver a tirar</button>
     </div>
 
     <!-- Área principal del cacho -->
     <div class="cacho-area">
       <div id="cacho-wrapper">
-        <!-- SVG del cacho (cilindro cónico cuero) -->
-        <svg id="cacho-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
-          <!-- Sombra exterior -->
-          <defs>
-            <radialGradient id="grad-cacho" cx="40%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="#8B5E3C"/>
-              <stop offset="100%" stop-color="#3E1F0A"/>
-            </radialGradient>
-            <radialGradient id="grad-tapa" cx="40%" cy="35%" r="65%">
-              <stop offset="0%" stop-color="#A0714F"/>
-              <stop offset="100%" stop-color="#4A2510"/>
-            </radialGradient>
-          </defs>
-          <!-- Cuerpo cónico (más ancho abajo) -->
-          <path id="cacho-body" d="M 38 30 Q 35 125 28 200 Q 80 215 132 200 Q 125 125 122 30 Q 80 20 38 30 Z"
-                fill="url(#grad-cacho)" stroke="#2A1005" stroke-width="2"/>
-          <!-- Costuras verticales -->
-          <line x1="80" y1="22" x2="80" y2="205" stroke="#5C3317" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/>
-          <line x1="52" y1="26" x2="44" y2="202" stroke="#5C3317" stroke-width="1" stroke-dasharray="5 5" opacity="0.5"/>
-          <line x1="108" y1="26" x2="116" y2="202" stroke="#5C3317" stroke-width="1" stroke-dasharray="5 5" opacity="0.5"/>
-          <!-- Borde superior (tapa/aro) -->
-          <ellipse id="cacho-top" cx="80" cy="30" rx="43" ry="12"
-                   fill="url(#grad-tapa)" stroke="#2A1005" stroke-width="2"/>
-          <!-- Borde inferior -->
-          <ellipse cx="80" cy="200" rx="53" ry="13"
-                   fill="#3E1F0A" stroke="#2A1005" stroke-width="2"/>
-          <!-- Reflejo sutil -->
-          <path d="M 55 40 Q 50 100 46 175" stroke="#C08050" stroke-width="3" fill="none" opacity="0.25" stroke-linecap="round"/>
-        </svg>
 
-        <!-- Dados (visibles solo en estado viendo-dados) -->
+        <!-- FIX 1: Dados VAN PRIMERO en el DOM, quedan detrás del SVG -->
+        <!-- Dados: visibles solo en estado viendo-dados -->
         <div id="dados-container" class="dados-container hidden">
           <div class="dado" id="dado-1"></div>
           <div class="dado" id="dado-2"></div>
@@ -78,13 +50,45 @@
           <div class="dado" id="dado-4"></div>
           <div class="dado" id="dado-5"></div>
         </div>
-      </div>
 
-      <!-- Instrucción contextual -->
-      <p id="instruccion" class="instruccion">Agita para tirar</p>
+        <!-- FIX 3: SVG del cacho sin gradientes — forma cónica plana -->
+        <!-- El SVG va DESPUÉS en el DOM = encima de los dados -->
+        <svg id="cacho-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- Cuerpo cónico: más ancho arriba, más angosto abajo -->
+          <path
+            id="cacho-body"
+            d="M 38 30 Q 35 125 28 200 Q 80 215 132 200 Q 125 125 122 30 Q 80 20 38 30 Z"
+            fill="#6B3E1E"
+            stroke="#2A1005"
+            stroke-width="2"
+          />
+          <!-- Costuras verticales -->
+          e x1="80" y1="22" x2="80" y2="205"
+            stroke="#5C3317" stroke-width="1.5"
+            stroke-dasharray="6 4" opacity="0.7"/>
+          e x1="52" y1="26" x2="44" y2="202"
+            stroke="#5C3317" stroke-width="1"
+            stroke-dasharray="5 5" opacity="0.5"/>
+          e x1="108" y1="26" x2="116" y2="202"
+            stroke="#5C3317" stroke-width="1"
+            stroke-dasharray="5 5" opacity="0.5"/>
+          <!-- Borde superior (aro) — elipse más ancha = boca del cacho -->
+          <ellipse id="cacho-top" cx="80" cy="30" rx="43" ry="12"
+            fill="#7A4822"
+            stroke="#2A1005" stroke-width="2"/>
+          <!-- Borde inferior — elipse más angosta = base del cacho -->
+          <ellipse cx="80" cy="200" rx="53" ry="13"
+            fill="#4A2510"
+            stroke="#2A1005" stroke-width="2"/>
+        </svg>
+
+      </div>
     </div>
 
-    <!-- Panel: Entre rondas -->
+    <!-- Instrucción contextual -->
+    <p id="instruccion" class="instruccion">Agita para tirar</p>
+
+    <!-- Panel Entre rondas -->
     <div id="panel-entre-rondas" class="panel-rondas hidden">
       <div class="toggles-rondas">
         <button class="toggle-ronda" id="toggle-perdi">PERDÍ UNO</button>
@@ -98,7 +102,7 @@
 
     <!-- Tooltip advertencia -->
     <div id="tooltip-advertencia" class="tooltip-advertencia hidden">
-      <p>¿Volver al inicio?<br/><small>Se perderá la partida actual</small></p>
+      <p>¿Volver al inicio?<br><small>Se perderá la partida actual</small></p>
       <div class="tooltip-btns">
         <button id="btn-confirmar-inicio">Sí, salir</button>
         <button id="btn-cancelar-inicio">Cancelar</button>
@@ -107,7 +111,7 @@
 
   </div>
 
-  <!-- ===== PANTALLA: ELIMINADO ===== -->
+  <!-- PANTALLA ELIMINADO -->
   <div id="screen-eliminado" class="screen">
     <div class="eliminado-content">
       <div class="emoji-eliminado">🎲</div>
