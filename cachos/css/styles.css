@@ -7,7 +7,6 @@
 
 /* ---------- VARIABLES (personalización futura) ---------- */
 :root {
-  /* Colores base */
   --bg-dark:        #1A1209;
   --bg-mesa:        #2C1A0E;
   --mesa-veta:      #3A2214;
@@ -16,22 +15,18 @@
   --accent:         #C8922A;
   --accent-dark:    #8B5E1A;
 
-  /* Cacho */
   --cacho-color:    #6B3E1E;
   --cacho-dark:     #3E1F0A;
 
-  /* Dados */
   --dado-bg:        #F5F0E8;
   --dado-punto:     #1A1209;
   --dado-sombra:    #C8B89A;
 
-  /* UI */
   --btn-primary:    #C8922A;
   --btn-radius:     12px;
   --toggle-active:  #C8922A;
   --toggle-inactive:#3A2A1A;
 
-  /* Timing */
   --anim-abrir:     2s;
   --anim-cerrar:    1s;
   --anim-voltear:   1s;
@@ -157,7 +152,6 @@ html, body {
   padding: 0 0 24px 0;
 }
 
-/* Header */
 .game-header {
   width: 100%;
   display: flex;
@@ -194,24 +188,22 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 20px;
   position: relative;
 }
 
 /*
-  FIX 1 + FIX 2:
-  - El wrapper es el ancla de posicionamiento
-  - Los dados van DENTRO del wrapper, en la base, z-index bajo
-  - El SVG del cacho va z-index alto, siempre encima
-  - El área de toque se expande con padding invisible
+  FIX 2: El wrapper tiene padding invisible para ampliar área de toque.
+  El cacho se anima como unidad completa (wrapper entero).
 */
 #cacho-wrapper {
   position: relative;
   width: 160px;
   height: 220px;
-  /* Área de toque ampliada — FIX 2 */
+  /* FIX 2: área de toque ampliada */
   padding: 40px;
   margin: -40px;
-  /* Animaciones */
+  transform-style: preserve-3d;
   transform: rotateX(0deg);
   transition: transform var(--anim-voltear) cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -221,38 +213,40 @@ html, body {
   transform: rotateX(180deg);
 }
 
-/* Cacho abierto: solo el SVG sube, los dados quedan fijos */
-#cacho-wrapper.abierto #cacho-svg {
-  transform: translateY(-120px);
+/* Cacho abierto: wrapper sube entero, dados quedan visibles debajo del SVG */
+#cacho-wrapper.abierto {
+  transform: translateY(-80px) rotateX(180deg);
   transition: transform var(--anim-abrir) cubic-bezier(0.3, 0, 0.2, 1);
 }
 
-#cacho-wrapper.cerrando #cacho-svg {
-  transform: translateY(0px);
+#cacho-wrapper.cerrando {
+  transform: rotateX(180deg);
   transition: transform var(--anim-cerrar) cubic-bezier(0.4, 0, 0.6, 1);
 }
 
-/* FIX 3: SVG sin gradientes — solo color plano, la forma cónica diferencia top/bottom */
+/*
+  FIX 1: SVG siempre encima de los dados via z-index.
+  FIX 3: Sin gradientes — solo drop-shadow para profundidad mínima.
+*/
 #cacho-svg {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2; /* FIX 1: siempre encima de los dados */
+  z-index: 2;
   filter: drop-shadow(0 8px 20px rgba(0,0,0,0.7));
-  transition: transform 0.3s ease;
+  transition: filter 0.3s ease;
 }
 
 /* ---------- DADOS ---------- */
 /*
-  FIX 1: Los dados están en la BASE del cacho-wrapper,
-  posición absoluta, z-index 1 (detrás del SVG del cacho).
-  Cuando el SVG sube, los dados quedan visibles debajo.
+  FIX 1: Dados posicionados en la base del wrapper, z-index 1 (detrás del SVG).
+  Quedan visibles cuando el SVG sube con el wrapper.
 */
 .dados-container {
   position: absolute;
-  bottom: 0;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -260,7 +254,7 @@ html, body {
   gap: 8px;
   justify-content: center;
   width: 180px;
-  z-index: 1; /* FIX 1: detrás del cacho */
+  z-index: 1;
   opacity: 0;
   transition: opacity 0.4s ease;
 }
@@ -306,7 +300,7 @@ html, body {
   text-align: center;
   min-height: 1.4em;
   transition: opacity 0.3s;
-  margin-top: 60px; /* espacio para que no quede pegado al cacho */
+  margin-top: 60px;
 }
 
 /* ---------- PANEL ENTRE RONDAS ---------- */
@@ -510,7 +504,6 @@ html, body {
 
 /* ---------- ANIMACIONES ---------- */
 
-/* Shake del cacho mientras se agita */
 @keyframes shake {
   0%   { transform: translateX(0) rotate(0deg); }
   15%  { transform: translateX(-8px) rotate(-3deg); }
@@ -526,7 +519,6 @@ html, body {
   animation: shake 0.35s ease-in-out infinite;
 }
 
-/* Golpe al fijar tiro */
 @keyframes golpe {
   0%   { transform: translateY(0) scale(1); }
   30%  { transform: translateY(12px) scale(0.97); }
@@ -538,7 +530,6 @@ html, body {
   animation: golpe 0.3s ease-out forwards;
 }
 
-/* Fade in dados */
 @keyframes dadoAppear {
   from { opacity: 0; transform: translateY(8px) scale(0.9); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
