@@ -9,7 +9,6 @@ const Cacho = (() => {
 
   // ---------- Referencias DOM ----------
   const wrapper   = document.getElementById('cacho-wrapper');
-  const svgEl     = document.getElementById('cacho-svg');
   const dadosCont = document.getElementById('dados-container');
   const dadoEls   = [1,2,3,4,5].map(i => document.getElementById(`dado-${i}`));
 
@@ -55,23 +54,18 @@ const Cacho = (() => {
   // ---------- Animaciones del cacho ----------
 
   function _limpiarClases() {
-    wrapper.classList.remove('shakeing', 'golpeando', 'boca-abajo');
-    // Limpia clases del SVG también
-    svgEl.classList.remove('svg-abierto', 'svg-cerrando');
+    wrapper.classList.remove('shakeing', 'golpeando', 'boca-abajo', 'abierto', 'cerrando');
   }
 
-  // Empieza shake en loop
   function iniciarShake() {
     _limpiarClases();
     wrapper.classList.add('shakeing');
   }
 
-  // Detiene shake
   function detenerShake() {
     wrapper.classList.remove('shakeing');
   }
 
-  // Golpe → cacho rebota, queda boca abajo
   function animarGolpe(onComplete) {
     detenerShake();
     wrapper.classList.add('golpeando');
@@ -83,66 +77,56 @@ const Cacho = (() => {
     }, 320);
   }
 
-  // FIX 1: abrir mueve SOLO el SVG hacia arriba
-  // Los dados quedan fijos en la base del wrapper
   function abrir() {
     if (!_bocaAbajo || _abierto) return;
     _abierto = true;
 
-    // Muestra dados (estaban hidden)
     dadosCont.classList.remove('hidden');
     dadosCont.style.display = 'flex';
 
-    // Sube SOLO el SVG — los dados quedan abajo
-    svgEl.classList.remove('svg-cerrando');
-    svgEl.classList.add('svg-abierto');
+    // Anima apertura — el CSS mueve el SVG hacia arriba via selector
+    // #cacho-wrapper.abierto #cacho-svg { translateY(-120px) }
+    wrapper.classList.remove('cerrando', 'boca-abajo');
+    wrapper.classList.add('abierto');
 
-    // Anima aparición de dados con delay escalonado
     dadoEls.forEach((el, i) => {
       if (i < _cantDados) {
         el.classList.remove('apareciendo');
-        setTimeout(() => el.classList.add('apareciendo'), 400 + i * 80);
+        setTimeout(() => el.classList.add('apareciendo'), 600 + i * 80);
       }
     });
 
-    // Fade in del contenedor
     setTimeout(() => {
       dadosCont.classList.add('visible');
-    }, 500);
+    }, 800);
   }
 
-  // FIX 1: cerrar baja SOLO el SVG de vuelta
   function cerrar(onComplete) {
     if (!_abierto) return;
     _abierto = false;
 
-    // Oculta dados
     dadosCont.classList.remove('visible');
     dadoEls.forEach(el => el.classList.remove('apareciendo'));
 
-    // Baja el SVG de vuelta
-    svgEl.classList.remove('svg-abierto');
-    svgEl.classList.add('svg-cerrando');
+    // Anima cierre — el CSS baja el SVG via selector
+    // #cacho-wrapper.cerrando #cacho-svg { translateY(0px) }
+    wrapper.classList.remove('abierto');
+    wrapper.classList.add('cerrando');
 
     setTimeout(() => {
-      svgEl.classList.remove('svg-cerrando');
+      wrapper.classList.remove('cerrando');
+      wrapper.classList.add('boca-abajo');
       dadosCont.classList.add('hidden');
       dadosCont.style.display = 'none';
       if (onComplete) onComplete();
     }, 1000);
   }
 
-  // Resetea a estado inicial
   function resetear() {
-    if (_abrirTimeout) {
-      clearTimeout(_abrirTimeout);
-      _abrirTimeout = null;
-    }
+    if (_abrirTimeout) { clearTimeout(_abrirTimeout); _abrirTimeout = null; }
     _limpiarClases();
     _bocaAbajo = false;
     _abierto   = false;
-    svgEl.classList.remove('svg-abierto', 'svg-cerrando');
-    svgEl.style.transform = '';
     dadosCont.classList.remove('visible');
     dadosCont.classList.add('hidden');
     dadosCont.style.display = 'none';
@@ -152,8 +136,8 @@ const Cacho = (() => {
     });
   }
 
-  // Feedback visual de progreso de shake
   function setShakeProgress(p) {
+    const svgEl = document.getElementById('cacho-svg');
     svgEl.style.filter = `drop-shadow(0 8px 20px rgba(0,0,0,0.7)) drop-shadow(0 0 ${Math.round(p * 18)}px rgba(200,146,42,${(p * 0.6).toFixed(2)}))`;
   }
 
