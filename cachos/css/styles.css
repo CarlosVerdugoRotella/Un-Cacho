@@ -189,10 +189,6 @@ html, body {
   position: relative;
 }
 
-/*
-  Sin rotateX. El cacho no gira — el SVG hace fade.
-  FIX 2: padding para área de toque ampliada.
-*/
 #cacho-wrapper {
   position: relative;
   width: 200px;
@@ -201,32 +197,26 @@ html, body {
   margin: -40px;
 }
 
-/*
-  boca-abajo: el SVG se voltea con scaleY(-1)
-  La boca (parte ancha+oscura) queda abajo visualmente.
-*/
+/* Boca abajo: scaleY invierte el SVG, la boca queda abajo */
 #cacho-wrapper.boca-abajo #cacho-svg {
   transform: scaleY(-1);
   transition: transform var(--anim-voltear) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/*
-  abierto: el SVG desaparece con fade → dados visibles debajo
-*/
+/* Abierto: solo fade, SIN transform — el giro ya está hecho por boca-abajo */
 #cacho-wrapper.abierto #cacho-svg {
+  transform: scaleY(-1);
   opacity: 0;
   transition: opacity var(--anim-abrir) ease;
 }
 
-/*
-  cerrando: el SVG reaparece
-*/
+/* Cerrando: reaparece con fade, mantiene scaleY(-1) */
 #cacho-wrapper.cerrando #cacho-svg {
+  transform: scaleY(-1);
   opacity: 1;
   transition: opacity var(--anim-cerrar) ease;
 }
 
-/* FIX 1 + FIX 3: SVG encima, sin gradientes */
 #cacho-svg {
   position: absolute;
   top: 0;
@@ -235,14 +225,10 @@ html, body {
   height: 100%;
   z-index: 2;
   filter: drop-shadow(0 8px 20px rgba(0,0,0,0.7));
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease, transform var(--anim-voltear) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ---------- DADOS ---------- */
-/*
-  FIX 1: z-index 1, detrás del SVG.
-  Centrados en el wrapper, se revelan cuando el SVG hace fade.
-*/
 .dados-container {
   position: absolute;
   top: 50%;
