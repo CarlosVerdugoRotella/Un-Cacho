@@ -1,0 +1,527 @@
+/* ============================================
+   UN CACHO — styles.css
+   Estructura: variables → reset → base → 
+   pantallas → cacho → dados → controles → 
+   animaciones
+   ============================================ */
+
+/* ---------- VARIABLES (personalización futura) ---------- */
+:root {
+  /* Colores base */
+  --bg-dark:        #1A1209;
+  --bg-mesa:        #2C1A0E;
+  --mesa-veta:      #3A2214;
+  --text-primary:   #F0DFC0;
+  --text-muted:     #8A7060;
+  --accent:         #C8922A;
+  --accent-dark:    #8B5E1A;
+
+  /* Cacho */
+  --cacho-color:    #6B3E1E;
+  --cacho-dark:     #3E1F0A;
+
+  /* Dados */
+  --dado-bg:        #F5F0E8;
+  --dado-punto:     #1A1209;
+  --dado-sombra:    #C8B89A;
+
+  /* UI */
+  --btn-primary:    #C8922A;
+  --btn-radius:     12px;
+  --toggle-active:  #C8922A;
+  --toggle-inactive:#3A2A1A;
+
+  /* Timing */
+  --anim-abrir:     2s;
+  --anim-cerrar:    1s;
+  --anim-voltear:   1s;
+}
+
+/* ---------- RESET ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-dark);
+  font-family: 'Georgia', serif;
+  color: var(--text-primary);
+  touch-action: none;
+}
+
+/* ---------- PANTALLAS ---------- */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+
+.screen.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ---------- PANTALLA INICIO ---------- */
+.inicio-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 40px 32px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.app-title {
+  font-size: 2.8rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-shadow: 0 2px 12px rgba(200,146,42,0.4);
+}
+
+.dado-decorativo {
+  font-size: 4rem;
+  opacity: 0.6;
+}
+
+.label-dados {
+  font-size: 1rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.selector-dados {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.selector-dados span {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--accent);
+  min-width: 48px;
+  text-align: center;
+}
+
+.btn-selector {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-dark);
+  background: var(--toggle-inactive);
+  color: var(--accent);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-selector:active {
+  background: var(--accent-dark);
+  transform: scale(0.93);
+}
+
+/* ---------- PANTALLA JUEGO ---------- */
+#screen-juego {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 38px,
+      var(--mesa-veta) 38px,
+      var(--mesa-veta) 40px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      transparent,
+      transparent 60px,
+      var(--mesa-veta) 60px,
+      var(--mesa-veta) 62px
+    ),
+    var(--bg-mesa);
+  justify-content: space-between;
+  padding: 0 0 24px 0;
+}
+
+/* Header */
+.game-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 52px 20px 12px;
+  background: rgba(26,18,9,0.6);
+  backdrop-filter: blur(4px);
+}
+
+.dados-counter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+#dados-iconos {
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+}
+
+#dados-count {
+  font-size: 1.1rem;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* ---------- ÁREA DEL CACHO ---------- */
+.cacho-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  position: relative;
+}
+
+#cacho-wrapper {
+  position: relative;
+  width: 160px;
+  height: 220px;
+  transform-style: preserve-3d;
+  /* Estado base: boca arriba */
+  transform: rotateX(0deg);
+  transition: transform var(--anim-voltear) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Cacho boca abajo (estado bloqueado) */
+#cacho-wrapper.boca-abajo {
+  transform: rotateX(180deg);
+}
+
+/* Cacho abierto (levanta para ver dados) */
+#cacho-wrapper.abierto {
+  transform: translateY(-80px) rotateX(180deg);
+  transition: transform var(--anim-abrir) cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+#cacho-wrapper.cerrando {
+  transform: rotateX(180deg);
+  transition: transform var(--anim-cerrar) cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+#cacho-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.7));
+}
+
+/* ---------- DADOS ---------- */
+.dados-container {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  width: 180px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.dados-container.visible {
+  opacity: 1;
+}
+
+.dados-container.hidden {
+  display: none;
+}
+
+.dado {
+  width: 44px;
+  height: 44px;
+  background: var(--dado-bg);
+  border-radius: 8px;
+  border: 2px solid var(--dado-sombra);
+  box-shadow: inset 0 -3px 6px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--dado-punto);
+  position: relative;
+}
+
+/* Puntos del dado via data-value */
+.dado::after {
+  content: attr(data-puntos);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* ---------- INSTRUCCIÓN ---------- */
+.instruccion {
+  font-size: 1rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  min-height: 1.4em;
+  transition: opacity 0.3s;
+}
+
+/* ---------- PANEL ENTRE RONDAS ---------- */
+.panel-rondas {
+  width: 100%;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.panel-rondas.hidden {
+  display: none;
+}
+
+.toggles-rondas {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.toggle-ronda {
+  flex: 1;
+  padding: 14px 8px;
+  border-radius: var(--btn-radius);
+  border: 2px solid var(--toggle-inactive);
+  background: var(--toggle-inactive);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-family: 'Georgia', serif;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-ronda.active {
+  border-color: var(--accent);
+  background: rgba(200,146,42,0.15);
+  color: var(--accent);
+}
+
+.toggle-ronda:active {
+  transform: scale(0.97);
+}
+
+.btn-tirar {
+  width: 100%;
+  font-size: 1.3rem;
+  letter-spacing: 0.12em;
+  padding: 18px;
+}
+
+/* ---------- BOTONES GENERALES ---------- */
+.btn-primary {
+  background: var(--btn-primary);
+  color: #1A1209;
+  border: none;
+  border-radius: var(--btn-radius);
+  padding: 16px 40px;
+  font-size: 1.1rem;
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 4px 16px rgba(200,146,42,0.3);
+}
+
+.btn-primary:active {
+  background: var(--accent-dark);
+  transform: scale(0.97);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent-dark);
+  border-radius: var(--btn-radius);
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-family: 'Georgia', serif;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-secondary:active {
+  background: rgba(200,146,42,0.1);
+}
+
+.btn-small {
+  padding: 6px 14px;
+  font-size: 0.8rem;
+}
+
+/* ---------- BOTÓN MINI INICIO ---------- */
+.btn-mini-inicio {
+  position: fixed;
+  bottom: 28px;
+  left: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(26,18,9,0.8);
+  border: 1px solid var(--text-muted);
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-mini-inicio:active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- TOOLTIP ADVERTENCIA ---------- */
+.tooltip-advertencia {
+  position: fixed;
+  bottom: 70px;
+  left: 16px;
+  background: #2C1A0E;
+  border: 1.5px solid var(--accent-dark);
+  border-radius: 12px;
+  padding: 16px;
+  z-index: 20;
+  max-width: 220px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+
+.tooltip-advertencia p {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.tooltip-advertencia small {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.tooltip-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.tooltip-btns button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.8rem;
+  font-family: 'Georgia', serif;
+  cursor: pointer;
+}
+
+.tooltip-btns button:first-child {
+  background: var(--accent);
+  color: #1A1209;
+  font-weight: bold;
+}
+
+.tooltip-btns button:last-child {
+  background: var(--toggle-inactive);
+  color: var(--text-muted);
+}
+
+.tooltip-advertencia.hidden {
+  display: none;
+}
+
+/* ---------- PANTALLA ELIMINADO ---------- */
+.eliminado-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 32px;
+  text-align: center;
+}
+
+.emoji-eliminado {
+  font-size: 5rem;
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+.eliminado-content h2 {
+  font-size: 2.4rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.sub-eliminado {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* ---------- ANIMACIONES ---------- */
+
+/* Shake del cacho mientras se agita */
+@keyframes shake {
+  0%   { transform: translateX(0) rotate(0deg); }
+  15%  { transform: translateX(-8px) rotate(-3deg); }
+  30%  { transform: translateX(8px) rotate(3deg); }
+  45%  { transform: translateX(-6px) rotate(-2deg); }
+  60%  { transform: translateX(6px) rotate(2deg); }
+  75%  { transform: translateX(-4px) rotate(-1deg); }
+  90%  { transform: translateX(4px) rotate(1deg); }
+  100% { transform: translateX(0) rotate(0deg); }
+}
+
+#cacho-wrapper.shakeing {
+  animation: shake 0.35s ease-in-out infinite;
+}
+
+/* Golpe al fijar tiro */
+@keyframes golpe {
+  0%   { transform: translateY(0) scale(1); }
+  30%  { transform: translateY(12px) scale(0.97); }
+  60%  { transform: translateY(-4px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+#cacho-wrapper.golpeando {
+  animation: golpe 0.3s ease-out forwards;
+}
+
+/* Fade in dados */
+@keyframes dadoAppear {
+  from { opacity: 0; transform: translateY(8px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dado.apareciendo {
+  animation: dadoAppear 0.3s ease-out forwards;
+}
