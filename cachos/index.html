@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Un Cacho</title>
-  /styles.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
@@ -14,7 +14,7 @@
   <div id="screen-inicio" class="screen active">
     <div class="inicio-content">
       <h1 class="app-title">Un Cacho</h1>
-      <div class="dado-decorativo">&#9999;</div>
+      <div class="dado-decorativo">🎲</div>
       <p class="label-dados">¿Cuántos dados?</p>
       <div class="selector-dados">
         <button class="btn-selector" id="btn-menos-inicio">−</button>
@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <!-- PANTALLA JUEGO — todos los estados del cacho -->
+  <!-- PANTALLA JUEGO -->
   <div id="screen-juego" class="screen">
 
     <!-- Header -->
@@ -41,8 +41,7 @@
     <div class="cacho-area">
       <div id="cacho-wrapper">
 
-        <!-- FIX 1: Dados VAN PRIMERO en el DOM, quedan detrás del SVG -->
-        <!-- Dados: visibles solo en estado viendo-dados -->
+        <!-- FIX 1: Dados PRIMERO en el DOM → z-index bajo → detrás del SVG -->
         <div id="dados-container" class="dados-container hidden">
           <div class="dado" id="dado-1"></div>
           <div class="dado" id="dado-2"></div>
@@ -51,8 +50,8 @@
           <div class="dado" id="dado-5"></div>
         </div>
 
-        <!-- FIX 3: SVG del cacho sin gradientes — forma cónica plana -->
-        <!-- El SVG va DESPUÉS en el DOM = encima de los dados -->
+        <!-- FIX 3: SVG sin gradientes — forma cónica plana -->
+        <!-- SVG DESPUÉS en el DOM → encima de los dados -->
         <svg id="cacho-svg" viewBox="0 0 160 220" xmlns="http://www.w3.org/2000/svg">
           <!-- Cuerpo cónico: más ancho arriba, más angosto abajo -->
           <path
@@ -63,20 +62,20 @@
             stroke-width="2"
           />
           <!-- Costuras verticales -->
-          e x1="80" y1="22" x2="80" y2="205"
+          <line x1="80" y1="22" x2="80" y2="205"
             stroke="#5C3317" stroke-width="1.5"
             stroke-dasharray="6 4" opacity="0.7"/>
-          e x1="52" y1="26" x2="44" y2="202"
+          <line x1="52" y1="26" x2="44" y2="202"
             stroke="#5C3317" stroke-width="1"
             stroke-dasharray="5 5" opacity="0.5"/>
-          e x1="108" y1="26" x2="116" y2="202"
+          <line x1="108" y1="26" x2="116" y2="202"
             stroke="#5C3317" stroke-width="1"
             stroke-dasharray="5 5" opacity="0.5"/>
-          <!-- Borde superior (aro) — elipse más ancha = boca del cacho -->
+          <!-- Borde superior (aro) -->
           <ellipse id="cacho-top" cx="80" cy="30" rx="43" ry="12"
             fill="#7A4822"
             stroke="#2A1005" stroke-width="2"/>
-          <!-- Borde inferior — elipse más angosta = base del cacho -->
+          <!-- Borde inferior -->
           <ellipse cx="80" cy="200" rx="53" ry="13"
             fill="#4A2510"
             stroke="#2A1005" stroke-width="2"/>
